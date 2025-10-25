@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>舍鲜果电商订单汇总工具</title>
+    <title>舍鲜果电商订单汇总工具 - 多人协作版</title>
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -223,6 +223,16 @@
             box-shadow: 0 7px 15px rgba(253, 126, 20, 0.3);
         }
 
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8, #138496);
+            color: white;
+        }
+
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 15px rgba(23, 162, 184, 0.3);
+        }
+
         .action-buttons {
             display: flex;
             gap: 15px;
@@ -440,10 +450,266 @@
             margin-bottom: 5px;
             font-family: monospace;
         }
+        
+        /* 登录界面样式 */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+        }
+        
+        .login-box {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .login-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .login-title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .login-subtitle {
+            color: var(--gray);
+            margin-bottom: 30px;
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .form-group {
+            text-align: left;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 15px rgba(40, 167, 69, 0.3);
+        }
+        
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .logout-btn:hover {
+            background: #c82333;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* 数据管理面板 */
+        .data-panel {
+            margin-top: 30px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            border: 1px solid rgba(40, 167, 69, 0.1);
+        }
+        
+        .data-panel h3 {
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .user-btn {
+            padding: 8px 15px;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .user-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .user-btn:hover {
+            background: #e9ecef;
+        }
+        
+        .user-btn.active:hover {
+            background: var(--primary-dark);
+        }
+        
+        .data-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .saved-data-list {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .saved-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .saved-item:last-child {
+            border-bottom: none;
+        }
+        
+        .saved-item-info {
+            flex-grow: 1;
+        }
+        
+        .saved-item-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .saved-item-btn {
+            padding: 5px 10px;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--transition);
+        }
+        
+        .saved-item-btn:hover {
+            background: #e9ecef;
+        }
+        
+        .saved-item-btn.primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .saved-item-btn.primary:hover {
+            background: var(--primary-dark);
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- 登录界面 -->
+    <div id="loginContainer" class="login-container">
+        <div class="login-box">
+            <div class="login-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2 class="login-title">舍鲜果订单工具</h2>
+            <p class="login-subtitle">多人协作版 - 请输入授权账号和密码</p>
+            
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="username">账号</label>
+                    <input type="text" id="username" class="form-input" placeholder="请输入账号" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="password">密码</label>
+                    <input type="password" id="password" class="form-input" placeholder="请输入密码" required>
+                </div>
+                
+                <button type="submit" class="login-btn">登录</button>
+            </form>
+            
+            <div id="loginError" style="color: var(--danger); margin-top: 15px; display: none;">
+                <i class="fas fa-exclamation-circle"></i> 账号或密码错误，请重试
+            </div>
+        </div>
+    </div>
+    
+    <!-- 主应用界面 -->
+    <div id="appContainer" class="container hidden">
+        <button id="logoutBtn" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> 退出登录
+        </button>
+        
         <header>
             <div class="logo">
                 <div class="logo-icon">
@@ -451,7 +717,7 @@
                 </div>
                 <div>
                     <h1>舍鲜果电商订单汇总工具</h1>
-                    <p class="subtitle">专为舍鲜果电商设计的智能订单处理工具，一键提取收件人信息，快速生成订单表格</p>
+                    <p class="subtitle">多人协作版 - 专为舍鲜果电商设计的智能订单处理工具</p>
                 </div>
             </div>
             
@@ -487,7 +753,9 @@
                 <li>点击<span class="highlight">"提取信息"</span>按钮，系统将自动识别并提取姓名、电话、地址和数量</li>
                 <li>分机号将自动与姓名合并，同时保留地址中的分机号</li>
                 <li>地址栏中的数量信息（如"1盒"）会被自动移除</li>
+                <li>使用<span class="highlight">"保存数据"</span>按钮将当前数据保存到服务器（保存3天）</li>
                 <li>使用<span class="highlight">"复制表格数据"</span>或<span class="highlight">"导出Excel文件"</span>按钮保存结果</li>
+                <li><span class="highlight">主账号</span>可以查看所有子账号保存的数据并合并导出</li>
             </ol>
             
             <div class="format-examples">
@@ -531,6 +799,9 @@
                 </div>
                 
                 <div class="action-buttons">
+                    <button id="saveBtn" class="btn btn-info">
+                        <i class="fas fa-save"></i> 保存数据
+                    </button>
                     <button id="copyBtn" class="btn btn-success">
                         <i class="fas fa-copy"></i> 复制表格数据
                     </button>
@@ -553,14 +824,307 @@
             </div>
         </div>
 
+        <!-- 数据管理面板 -->
+        <div class="data-panel">
+            <h3><i class="fas fa-database"></i> 数据管理</h3>
+            
+            <div id="userSelector" class="user-selector">
+                <!-- 用户选择按钮将通过JavaScript动态生成 -->
+            </div>
+            
+            <div class="saved-data-list" id="savedDataList">
+                <!-- 保存的数据列表将通过JavaScript动态生成 -->
+            </div>
+            
+            <div class="data-actions">
+                <button id="loadAllDataBtn" class="btn btn-primary">
+                    <i class="fas fa-download"></i> 加载所有数据
+                </button>
+                <button id="exportAllDataBtn" class="btn btn-warning">
+                    <i class="fas fa-file-excel"></i> 导出所有数据
+                </button>
+                <button id="clearOldDataBtn" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> 清理过期数据
+                </button>
+            </div>
+        </div>
+
         <div class="footer">
-            <p>舍鲜果电商订单汇总工具 &copy; 2023 | 专为舍鲜果电商订单处理优化设计</p>
+            <p>舍鲜果电商订单汇总工具 &copy; 2025 | - 专为懒人电商订单统计</p>
         </div>
     </div>
 
     <div class="toast" id="toast"></div>
 
     <script>
+        // ==================== 授权系统配置 ====================
+        // 主账号和子账号配置
+        const AUTHORIZED_USERS = [
+            { username: "admin", password: "admin123", role: "admin" },
+            { username: "沈文浩", password: "swh1234", role: "user" },
+            { username: "马凯", password: "mk1234", role: "user" },
+            { username: "user3", password: "password3", role: "user" },
+            { username: "user4", password: "password4", role: "user" },
+            { username: "user5", password: "password5", role: "user" }
+        ];
+        
+        // 数据存储键名
+        const STORAGE_KEY = 'fresh_fruit_order_data';
+        
+        // 检查用户是否已登录
+        function checkLogin() {
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            return loggedInUser && AUTHORIZED_USERS.some(user => user.username === loggedInUser);
+        }
+        
+        // 显示/隐藏界面
+        function toggleUI() {
+            const isLoggedIn = checkLogin();
+            document.getElementById('loginContainer').classList.toggle('hidden', isLoggedIn);
+            document.getElementById('appContainer').classList.toggle('hidden', !isLoggedIn);
+            
+            if (isLoggedIn) {
+                const currentUser = localStorage.getItem('loggedInUser');
+                const userInfo = AUTHORIZED_USERS.find(user => user.username === currentUser);
+                updateDataPanel(userInfo.role === 'admin');
+            }
+        }
+        
+        // 登录处理
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('loginError');
+            
+            // 检查账号密码
+            const isValidUser = AUTHORIZED_USERS.some(user => 
+                user.username === username && user.password === password);
+            
+            if (isValidUser) {
+                // 登录成功
+                localStorage.setItem('loggedInUser', username);
+                errorDiv.style.display = 'none';
+                toggleUI();
+                showToast(`欢迎回来，${username}！`);
+            } else {
+                // 登录失败
+                errorDiv.style.display = 'block';
+                document.getElementById('password').value = '';
+            }
+        });
+        
+        // 退出登录
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('loggedInUser');
+            toggleUI();
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('loginError').style.display = 'none';
+        });
+        
+        // ==================== 数据存储功能 ====================
+        // 获取所有保存的数据
+        function getAllData() {
+            const dataStr = localStorage.getItem(STORAGE_KEY);
+            return dataStr ? JSON.parse(dataStr) : [];
+        }
+        
+        // 保存数据
+        function saveData(data, username) {
+            const allData = getAllData();
+            const timestamp = new Date().getTime();
+            const expiryTime = timestamp + (3 * 24 * 60 * 60 * 1000); // 3天后过期
+            
+            const newData = {
+                id: timestamp,
+                username: username,
+                data: data,
+                timestamp: timestamp,
+                expiry: expiryTime
+            };
+            
+            allData.push(newData);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(allData));
+            
+            return newData;
+        }
+        
+        // 获取用户数据
+        function getUserData(username) {
+            const allData = getAllData();
+            const now = new Date().getTime();
+            
+            // 过滤过期数据并返回对应用户的数据
+            return allData.filter(item => 
+                item.username === username && item.expiry > now
+            );
+        }
+        
+        // 清理过期数据
+        function clearExpiredData() {
+            const allData = getAllData();
+            const now = new Date().getTime();
+            const validData = allData.filter(item => item.expiry > now);
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(validData));
+            return allData.length - validData.length;
+        }
+        
+        // 删除特定数据
+        function deleteData(id) {
+            const allData = getAllData();
+            const updatedData = allData.filter(item => item.id !== id);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedData));
+        }
+        
+        // ==================== 数据管理面板 ====================
+        function updateDataPanel(isAdmin) {
+            const userSelector = document.getElementById('userSelector');
+            const savedDataList = document.getElementById('savedDataList');
+            const currentUser = localStorage.getItem('loggedInUser');
+            
+            // 更新用户选择器
+            if (isAdmin) {
+                userSelector.innerHTML = '';
+                
+                // 添加"所有用户"选项
+                const allUsersBtn = document.createElement('button');
+                allUsersBtn.className = 'user-btn active';
+                allUsersBtn.textContent = '所有用户';
+                allUsersBtn.dataset.user = 'all';
+                allUsersBtn.addEventListener('click', function() {
+                    document.querySelectorAll('.user-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    displaySavedData('all');
+                });
+                userSelector.appendChild(allUsersBtn);
+                
+                // 添加各个用户选项
+                AUTHORIZED_USERS.forEach(user => {
+                    const userBtn = document.createElement('button');
+                    userBtn.className = 'user-btn';
+                    userBtn.textContent = user.username;
+                    userBtn.dataset.user = user.username;
+                    userBtn.addEventListener('click', function() {
+                        document.querySelectorAll('.user-btn').forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
+                        displaySavedData(user.username);
+                    });
+                    userSelector.appendChild(userBtn);
+                });
+                
+                // 显示所有用户的数据
+                displaySavedData('all');
+            } else {
+                userSelector.innerHTML = `<p>当前用户: <strong>${currentUser}</strong></p>`;
+                displaySavedData(currentUser);
+            }
+        }
+        
+        // 显示保存的数据
+        function displaySavedData(username) {
+            const savedDataList = document.getElementById('savedDataList');
+            savedDataList.innerHTML = '';
+            
+            let dataToShow = [];
+            
+            if (username === 'all') {
+                // 显示所有用户的数据
+                AUTHORIZED_USERS.forEach(user => {
+                    dataToShow = dataToShow.concat(getUserData(user.username));
+                });
+            } else {
+                // 显示特定用户的数据
+                dataToShow = getUserData(username);
+            }
+            
+            // 按时间排序（最新的在前）
+            dataToShow.sort((a, b) => b.timestamp - a.timestamp);
+            
+            if (dataToShow.length === 0) {
+                savedDataList.innerHTML = '<div class="no-data"><i class="fas fa-inbox"></i><p>暂无保存的数据</p></div>';
+                return;
+            }
+            
+            dataToShow.forEach(item => {
+                const savedItem = document.createElement('div');
+                savedItem.className = 'saved-item';
+                
+                const date = new Date(item.timestamp);
+                const expiryDate = new Date(item.expiry);
+                
+                savedItem.innerHTML = `
+                    <div class="saved-item-info">
+                        <strong>${item.username}</strong> - ${date.toLocaleString()}
+                        <br>
+                        <small>数据量: ${item.data.length} 条 | 过期时间: ${expiryDate.toLocaleDateString()}</small>
+                    </div>
+                    <div class="saved-item-actions">
+                        <button class="saved-item-btn primary" data-id="${item.id}">加载</button>
+                        <button class="saved-item-btn" data-id="${item.id}">导出</button>
+                        <button class="saved-item-btn" data-id="${item.id}">删除</button>
+                    </div>
+                `;
+                
+                savedDataList.appendChild(savedItem);
+            });
+            
+            // 添加事件监听器
+            savedDataList.querySelectorAll('.saved-item-btn.primary').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.dataset.id);
+                    loadSavedData(id);
+                });
+            });
+            
+            savedDataList.querySelectorAll('.saved-item-btn:not(.primary)').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.dataset.id);
+                    if (this.textContent === '导出') {
+                        exportSavedData(id);
+                    } else if (this.textContent === '删除') {
+                        deleteSavedData(id);
+                    }
+                });
+            });
+        }
+        
+        // 加载保存的数据
+        function loadSavedData(id) {
+            const allData = getAllData();
+            const dataItem = allData.find(item => item.id === id);
+            
+            if (dataItem) {
+                currentTableData = dataItem.data;
+                generateTable(currentTableData);
+                showToast(`已加载 ${dataItem.username} 的数据（${dataItem.data.length} 条）`);
+            }
+        }
+        
+        // 导出保存的数据
+        function exportSavedData(id) {
+            const allData = getAllData();
+            const dataItem = allData.find(item => item.id === id);
+            
+            if (dataItem) {
+                exportToExcel(dataItem.data, `舍鲜果订单_${dataItem.username}_${new Date(dataItem.timestamp).toLocaleDateString()}`);
+            }
+        }
+        
+        // 删除保存的数据
+        function deleteSavedData(id) {
+            if (confirm('确定要删除这条数据吗？')) {
+                deleteData(id);
+                const currentUser = localStorage.getItem('loggedInUser');
+                const userInfo = AUTHORIZED_USERS.find(user => user.username === currentUser);
+                updateDataPanel(userInfo.role === 'admin');
+                showToast('数据已删除', 'success');
+            }
+        }
+        
+        // ==================== 工具功能代码 ====================
         let currentTableData = [];
         let processedCount = 0;
         
@@ -776,6 +1340,23 @@
             }, 800);
         });
         
+        // 保存数据按钮
+        document.getElementById('saveBtn').addEventListener('click', function() {
+            if (currentTableData.length === 0) {
+                showToast('没有数据可保存', 'error');
+                return;
+            }
+            
+            const currentUser = localStorage.getItem('loggedInUser');
+            const savedData = saveData(currentTableData, currentUser);
+            
+            showToast(`数据已保存（${currentTableData.length} 条），将在 ${new Date(savedData.expiry).toLocaleDateString()} 过期`);
+            
+            // 更新数据面板
+            const userInfo = AUTHORIZED_USERS.find(user => user.username === currentUser);
+            updateDataPanel(userInfo.role === 'admin');
+        });
+        
         function generateTable(data) {
             const tableContainer = document.getElementById('tableContainer');
             
@@ -843,12 +1424,8 @@
             });
         });
         
-        document.getElementById('exportBtn').addEventListener('click', function() {
-            if (currentTableData.length === 0) {
-                showToast('没有表格数据可导出', 'error');
-                return;
-            }
-            
+        // 导出到Excel函数
+        function exportToExcel(data, filename) {
             // 创建工作簿
             const wb = XLSX.utils.book_new();
             
@@ -857,7 +1434,7 @@
                 ['规格', '数量', '/', '/', '姓名', '电话', '地址', '备注']
             ];
             
-            currentTableData.forEach(item => {
+            data.forEach(item => {
                 wsData.push([
                     item.specification,
                     item.quantity,
@@ -877,14 +1454,81 @@
             XLSX.utils.book_append_sheet(wb, ws, '订单信息');
             
             // 生成Excel文件并下载
-            const date = new Date();
-            const filename = `舍鲜果订单信息_${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}_${date.getHours().toString().padStart(2, '0')}${date.getMinutes().toString().padStart(2, '0')}.xlsx`;
+            XLSX.writeFile(wb, filename + '.xlsx');
+        }
+        
+        document.getElementById('exportBtn').addEventListener('click', function() {
+            if (currentTableData.length === 0) {
+                showToast('没有表格数据可导出', 'error');
+                return;
+            }
             
-            XLSX.writeFile(wb, filename);
+            const date = new Date();
+            const filename = `舍鲜果订单信息_${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}_${date.getHours().toString().padStart(2, '0')}${date.getMinutes().toString().padStart(2, '0')}`;
+            
+            exportToExcel(currentTableData, filename);
             showToast('Excel文件已生成并开始下载');
         });
         
-        // 初始化统计数据
+        // 加载所有数据按钮
+        document.getElementById('loadAllDataBtn').addEventListener('click', function() {
+            const allData = getAllData();
+            const now = new Date().getTime();
+            const validData = allData.filter(item => item.expiry > now);
+            
+            if (validData.length === 0) {
+                showToast('没有可用的数据', 'error');
+                return;
+            }
+            
+            // 合并所有数据
+            let mergedData = [];
+            validData.forEach(item => {
+                mergedData = mergedData.concat(item.data);
+            });
+            
+            currentTableData = mergedData;
+            generateTable(currentTableData);
+            showToast(`已加载所有用户的数据，共 ${mergedData.length} 条`);
+        });
+        
+        // 导出所有数据按钮
+        document.getElementById('exportAllDataBtn').addEventListener('click', function() {
+            const allData = getAllData();
+            const now = new Date().getTime();
+            const validData = allData.filter(item => item.expiry > now);
+            
+            if (validData.length === 0) {
+                showToast('没有可用的数据', 'error');
+                return;
+            }
+            
+            // 合并所有数据
+            let mergedData = [];
+            validData.forEach(item => {
+                mergedData = mergedData.concat(item.data);
+            });
+            
+            const date = new Date();
+            const filename = `舍鲜果所有订单数据_${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}`;
+            
+            exportToExcel(mergedData, filename);
+            showToast('所有数据已导出为Excel文件');
+        });
+        
+        // 清理过期数据按钮
+        document.getElementById('clearOldDataBtn').addEventListener('click', function() {
+            const clearedCount = clearExpiredData();
+            showToast(`已清理 ${clearedCount} 条过期数据`, 'success');
+            
+            // 更新数据面板
+            const currentUser = localStorage.getItem('loggedInUser');
+            const userInfo = AUTHORIZED_USERS.find(user => user.username === currentUser);
+            updateDataPanel(userInfo.role === 'admin');
+        });
+        
+        // 初始化
+        toggleUI();
         updateStats();
     </script>
 </body>
