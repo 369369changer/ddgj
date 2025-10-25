@@ -418,6 +418,28 @@
         .fruit-2 { top: 20%; right: 10%; }
         .fruit-3 { bottom: 15%; left: 8%; }
         .fruit-4 { bottom: 25%; right: 5%; }
+        
+        .format-examples {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .format-examples h4 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .format-examples ul {
+            padding-left: 20px;
+        }
+        
+        .format-examples li {
+            margin-bottom: 5px;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
@@ -466,6 +488,15 @@
                 <li>分机号将自动与姓名合并，同时保留地址中的分机号</li>
                 <li>使用<span class="highlight">"复制表格数据"</span>或<span class="highlight">"导出Excel文件"</span>按钮保存结果</li>
             </ol>
+            
+            <div class="format-examples">
+                <h4>支持格式示例：</h4>
+                <ul>
+                    <li>淘宝格式：沙,18470715305-8352,江西省 赣州市 宁都县 梅江镇宝塔路,</li>
+                    <li>京东格式：通达18825593429北京朝阳区管庄地区塔营北街一号院二号楼~二单元楼302室、[2933]</li>
+                    <li>标准格式：许洁[9991] 18412840520 海南省 海口市 美兰区 五指山路47号和谐家园商住楼A栋1单元2106[9991] 1盒</li>
+                </ul>
+            </div>
         </div>
 
         <div class="app-container">
@@ -483,10 +514,9 @@
 海南省 海口市 美兰区 五指山路47号和谐家园商住楼A栋1单元2106[9991]
 1盒
 #
-张三
-13195011820
-北京市朝阳区建国门外大街1号国贸大厦A座1001
-2盒"></textarea>
+沙,18470715305-8352,江西省 赣州市 宁都县 梅江镇宝塔路,
+#
+通达18825593429北京朝阳区管庄地区塔营北街一号院二号楼~二单元楼302室、[2933]"></textarea>
                 <button id="extractBtn" class="btn btn-primary">
                     <i class="fas fa-cogs"></i> 提取信息
                 </button>
@@ -550,12 +580,149 @@
         function updateStats() {
             document.getElementById('totalOrders').textContent = processedCount;
             document.getElementById('processedToday').textContent = currentTableData.length;
-            document.getElementById('timeSaved').textContent = Math.round(currentTableData.length * 2.5); // 假设每个订单节省2.5分钟
+            document.getElementById('timeSaved').textContent = Math.round(currentTableData.length * 2.5);
+            document.getElementById('successRate').textContent = currentTableData.length > 0 ? '100%' : '0%';
         }
         
         // 显示处理中状态
         function showProcessing(show) {
             document.getElementById('processingIndicator').style.display = show ? 'block' : 'none';
+        }
+        
+        // 增强的信息提取函数
+        function extractInfo(recipient) {
+            // 移除多余的空格和换行
+            let text = recipient.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+            
+            // 提取分机号（可能出现在姓名后、电话后或地址后）
+            let extension = '';
+            const extensionMatch = text.match(/\[(\d+)\]/);
+            if (extensionMatch) {
+                extension = `[${extensionMatch[1]}]`;
+                text = text.replace(/\[\d+\]/, ''); // 移除分机号标记
+            }
+            
+            // 尝试提取电话号码（支持带-的分机号格式）
+            let phone = '';
+            const phoneMatch = text.match(/(\d{11})(-\d+)?/);
+            if (phoneMatch) {
+                phone = phoneMatch[1]; // 11位手机号
+                
+                // 处理带-的分机号
+                if (phoneMatch[2] && !extension) {
+                    extension = `[${phoneMatch[2].substring(1)}]`; // 去掉-号
+                }
+                
+                // 根据电话号码分割文本
+                const phoneIndex = text.indexOf(phoneMatch[0]);
+                let beforePhone = text.substring(0, phoneIndex).trim();
+                let afterPhone = text.substring(phoneIndex + phoneMatch[0].length).trim();
+                
+                // 提取姓名（电话号码前的部分）
+                let name = beforePhone;
+                
+                // 清理姓名中的逗号和其他分隔符
+                name = name.replace(/[,，、]/g, '').trim();
+                
+                // 提取地址（电话号码后的部分）
+                let address = afterPhone;
+                
+                // 清理地址中的逗号和其他分隔符
+                address = address.replace(/[,，、]/g, ' ').trim();
+                
+                // 提取数量信息
+                let quantity = '';
+                const quantityMatch = text.match(/(\d+)\s*(盒|个|件|箱)/);
+                if (quantityMatch) {
+                    quantity = quantityMatch[1];
+                }
+                
+                // 合并姓名和分机号
+                if (extension) {
+                    name += extension;
+                }
+                
+                return {
+                    specification: '',
+                    quantity: quantity,
+                    slash1: '',
+                    slash2: '',
+                    name: name,
+                    phone: phone,
+                    address: address,
+                    remark: ''
+                };
+            }
+            
+            // 如果无法提取电话号码，尝试按行分割
+            const lines = recipient.split('\n').map(line => line.trim()).filter(line => line);
+            if (lines.length >= 3) {
+                let nameLine = lines[0];
+                let phoneLine = lines[1];
+                let addressLine = lines[2];
+                
+                // 处理姓名行中的分机号
+                const nameMatch = nameLine.match(/^(.+?)(?:\[(\d+)\])?$/);
+                if (nameMatch) {
+                    nameLine = nameMatch[1];
+                    if (nameMatch[2] && !extension) {
+                        extension = `[${nameMatch[2]}]`;
+                    }
+                }
+                
+                // 处理电话行中的分机号
+                const phoneMatch = phoneLine.match(/^(\d+)(?:-*\[(\d+)\])?$/);
+                if (phoneMatch) {
+                    phoneLine = phoneMatch[1];
+                    if (phoneMatch[2] && !extension) {
+                        extension = `[${phoneMatch[2]}]`;
+                    }
+                }
+                
+                // 处理地址行中的分机号
+                const addressMatch = addressLine.match(/^(.+?)(?:\[(\d+)\])?$/);
+                if (addressMatch) {
+                    addressLine = addressMatch[1];
+                    if (addressMatch[2] && !extension) {
+                        extension = `[${addressMatch[2]}]`;
+                    }
+                }
+                
+                // 提取数量
+                let quantity = '';
+                if (lines.length > 3) {
+                    const quantityMatch = lines[3].match(/(\d+)\s*(盒|个|件|箱)/);
+                    if (quantityMatch) {
+                        quantity = quantityMatch[1];
+                    }
+                }
+                
+                // 合并姓名和分机号
+                const fullName = nameLine + extension;
+                
+                return {
+                    specification: '',
+                    quantity: quantity,
+                    slash1: '',
+                    slash2: '',
+                    name: fullName,
+                    phone: phoneLine,
+                    address: addressLine,
+                    remark: ''
+                };
+            }
+            
+            // 如果所有方法都失败，返回默认值
+            return {
+                specification: '',
+                quantity: '',
+                slash1: '',
+                slash2: '',
+                name: text,
+                phone: '',
+                address: '',
+                remark: '解析失败，请检查格式'
+            };
         }
         
         document.getElementById('extractBtn').addEventListener('click', function() {
@@ -575,63 +742,8 @@
                 
                 // 处理每个收件人信息
                 recipients.forEach(recipient => {
-                    const lines = recipient.split('\n').map(line => line.trim()).filter(line => line);
-                    
-                    if (lines.length < 3) {
-                        console.warn('信息格式不完整:', recipient);
-                        return;
-                    }
-                    
-                    // 提取姓名和分机号
-                    let nameLine = lines[0];
-                    let extension = '';
-                    
-                    // 检查姓名行是否有分机号
-                    const nameMatch = nameLine.match(/^(.+?)(?:\[(\d+)\])?$/);
-                    if (nameMatch) {
-                        nameLine = nameMatch[1];
-                        if (nameMatch[2]) {
-                            extension = `[${nameMatch[2]}]`;
-                        }
-                    }
-                    
-                    // 提取电话
-                    let phoneLine = lines[1];
-                    // 检查电话行是否有分机号
-                    const phoneMatch = phoneLine.match(/^(\d+)(?:-*\[(\d+)\])?$/);
-                    if (phoneMatch) {
-                        phoneLine = phoneMatch[1];
-                        if (phoneMatch[2] && !extension) {
-                            extension = `[${phoneMatch[2]}]`;
-                        }
-                    }
-                    
-                    // 提取地址（保留地址中的分机号）
-                    let addressLine = lines[2];
-                    
-                    // 提取数量
-                    let quantity = '';
-                    if (lines.length > 3) {
-                        const quantityMatch = lines[3].match(/(\d+)\s*盒/);
-                        if (quantityMatch) {
-                            quantity = quantityMatch[1];
-                        }
-                    }
-                    
-                    // 合并姓名和分机号
-                    const fullName = nameLine + extension;
-                    
-                    // 添加到表格数据
-                    currentTableData.push({
-                        specification: '', // 规格默认空
-                        quantity: quantity,
-                        slash1: '', // 第一个/默认空
-                        slash2: '', // 第二个/默认空
-                        name: fullName,
-                        phone: phoneLine,
-                        address: addressLine,
-                        remark: '' // 备注默认空
-                    });
+                    const extractedInfo = extractInfo(recipient);
+                    currentTableData.push(extractedInfo);
                 });
                 
                 // 生成表格
