@@ -486,6 +486,7 @@
                 <li>将多个收件人信息粘贴到左侧输入框，每个收件人信息用 <span class="highlight">#</span> 号分隔</li>
                 <li>点击<span class="highlight">"提取信息"</span>按钮，系统将自动识别并提取姓名、电话、地址和数量</li>
                 <li>分机号将自动与姓名合并，同时保留地址中的分机号</li>
+                <li>地址栏中的数量信息（如"1盒"）会被自动移除</li>
                 <li>使用<span class="highlight">"复制表格数据"</span>或<span class="highlight">"导出Excel文件"</span>按钮保存结果</li>
             </ol>
             
@@ -511,8 +512,7 @@
 
 许洁[9991]
 18412840520
-海南省 海口市 美兰区 五指山路47号和谐家园商住楼A栋1单元2106[9991]
-1盒
+海南省 海口市 美兰区 五指山路47号和谐家园商住楼A栋1单元2106[9991] 1盒
 #
 沙,18470715305-8352,江西省 赣州市 宁都县 梅江镇宝塔路,
 #
@@ -589,6 +589,12 @@
             document.getElementById('processingIndicator').style.display = show ? 'block' : 'none';
         }
         
+        // 清理地址中的数量信息
+        function cleanAddress(address) {
+            // 移除地址末尾的数量信息（如"1盒"、"2件"等）
+            return address.replace(/\s*\d+\s*(盒|个|件|箱)\s*$/, '').trim();
+        }
+        
         // 增强的信息提取函数
         function extractInfo(recipient) {
             // 移除多余的空格和换行
@@ -635,6 +641,8 @@
                 const quantityMatch = text.match(/(\d+)\s*(盒|个|件|箱)/);
                 if (quantityMatch) {
                     quantity = quantityMatch[1];
+                    // 从地址中移除数量信息
+                    address = cleanAddress(address);
                 }
                 
                 // 合并姓名和分机号
@@ -694,6 +702,14 @@
                     const quantityMatch = lines[3].match(/(\d+)\s*(盒|个|件|箱)/);
                     if (quantityMatch) {
                         quantity = quantityMatch[1];
+                    }
+                } else {
+                    // 如果只有三行，尝试从地址行中提取数量
+                    const quantityMatch = addressLine.match(/(\d+)\s*(盒|个|件|箱)/);
+                    if (quantityMatch) {
+                        quantity = quantityMatch[1];
+                        // 从地址中移除数量信息
+                        addressLine = cleanAddress(addressLine);
                     }
                 }
                 
