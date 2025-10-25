@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>舍鲜果电商订单汇总工具</title>
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #28a745;
+            --primary-dark: #218838;
+            --secondary: #ff7b00;
+            --accent: #ffc107;
+            --light: #f8f9fa;
+            --dark: #2d3e50;
+            --success: #20c997;
+            --warning: #fd7e14;
+            --danger: #dc3545;
+            --gray: #6c757d;
+            --gray-light: #adb5bd;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, white 0%, #f8fff9 100%);
+            border: 1px solid rgba(40, 167, 69, 0.1);
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+            font-size: 1.8rem;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--gray);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 1024px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            transition: var(--transition);
+            height: fit-content;
+            border: 1px solid rgba(40, 167, 69, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            resize: vertical;
+            font-size: 1rem;
+            line-height: 1.6;
+            transition: var(--transition);
+            background: #fafafa;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+            background: white;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #1ba87e);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 15px rgba(32, 201, 151, 0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #e86f0c);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 15px rgba(253, 126, 20, 0.3);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.9rem;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f0f9f0;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid rgba(40, 167, 69, 0.1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .instructions {
+            background: linear-gradient(135deg, #f0f9f0, #e8f5e9);
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 30px;
+        }
+
+        .instructions h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .instructions ol {
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 50px;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, rgba(32, 201, 151, 0.3), rgba(32, 201, 151, 0.1));
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--gray-light);
+        }
+
+        .processing {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: var(--dark);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        .toast.error {
+            background: var(--danger);
+        }
+
+        .fruit-decoration {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .fruit-1 { top: 10%; left: 5%; }
+        .fruit-2 { top: 20%; right: 10%; }
+        .fruit-3 { bottom: 15%; left: 8%; }
+        .fruit-4 { bottom: 25%; right: 5%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-apple-alt"></i>
+                </div>
+                <div>
+                    <h1>舍鲜果电商订单汇总工具</h1>
+                    <p class="subtitle">专为舍鲜果电商设计的智能订单处理工具，一键提取收件人信息，快速生成订单表格</p>
+                </div>
+            </div>
+            
+            <div class="fruit-decoration fruit-1">🍎</div>
+            <div class="fruit-decoration fruit-2">🍊</div>
+            <div class="fruit-decoration fruit-3">🍇</div>
+            <div class="fruit-decoration fruit-4">🍓</div>
+        </header>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalOrders">0</div>
+                <div class="stat-label">总订单数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="processedToday">0</div>
+                <div class="stat-label">今日已处理</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="timeSaved">0</div>
+                <div class="stat-label">节省时间(分钟)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="successRate">100%</div>
+                <div class="stat-label">识别成功率</div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> 使用说明</h3>
+            <ol>
+                <li>将多个收件人信息粘贴到左侧输入框，每个收件人信息用 <span class="highlight">#</span> 号分隔</li>
+                <li>点击<span class="highlight">"提取信息"</span>按钮，系统将自动识别并提取姓名、电话、地址和数量</li>
+                <li>分机号将自动与姓名合并，同时保留地址中的分机号</li>
+                <li>使用<span class="highlight">"复制表格数据"</span>或<span class="highlight">"导出Excel文件"</span>按钮保存结果</li>
+            </ol>
+        </div>
+
+        <div class="app-container">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <h2 class="card-title">输入收件人信息</h2>
+                </div>
+                <textarea id="inputText" placeholder="请将收件人信息粘贴到这里，每个收件人信息用 # 号分隔。例如：
+
+许洁[9991]
+18412840520
+海南省 海口市 美兰区 五指山路47号和谐家园商住楼A栋1单元2106[9991]
+1盒
+#
+张三
+13195011820
+北京市朝阳区建国门外大街1号国贸大厦A座1001
+2盒"></textarea>
+                <button id="extractBtn" class="btn btn-primary">
+                    <i class="fas fa-cogs"></i> 提取信息
+                </button>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-table"></i>
+                    </div>
+                    <h2 class="card-title">提取结果</h2>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="copyBtn" class="btn btn-success">
+                        <i class="fas fa-copy"></i> 复制表格数据
+                    </button>
+                    <button id="exportBtn" class="btn btn-warning">
+                        <i class="fas fa-file-excel"></i> 导出Excel文件
+                    </button>
+                </div>
+                
+                <div class="processing" id="processingIndicator">
+                    <div class="spinner"></div>
+                    <p>正在处理数据，请稍候...</p>
+                </div>
+                
+                <div id="tableContainer">
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>提取结果将显示在这里</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>舍鲜果电商订单汇总工具 &copy; 2023 | 专为舍鲜果电商订单处理优化设计</p>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let currentTableData = [];
+        let processedCount = 0;
+        
+        // 显示提示消息
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 更新统计数据
+        function updateStats() {
+            document.getElementById('totalOrders').textContent = processedCount;
+            document.getElementById('processedToday').textContent = currentTableData.length;
+            document.getElementById('timeSaved').textContent = Math.round(currentTableData.length * 2.5); // 假设每个订单节省2.5分钟
+        }
+        
+        // 显示处理中状态
+        function showProcessing(show) {
+            document.getElementById('processingIndicator').style.display = show ? 'block' : 'none';
+        }
+        
+        document.getElementById('extractBtn').addEventListener('click', function() {
+            const inputText = document.getElementById('inputText').value.trim();
+            if (!inputText) {
+                showToast('请输入收件人信息', 'error');
+                return;
+            }
+            
+            showProcessing(true);
+            
+            // 模拟处理延迟
+            setTimeout(() => {
+                // 分割收件人信息
+                const recipients = inputText.split('#').map(r => r.trim()).filter(r => r);
+                currentTableData = [];
+                
+                // 处理每个收件人信息
+                recipients.forEach(recipient => {
+                    const lines = recipient.split('\n').map(line => line.trim()).filter(line => line);
+                    
+                    if (lines.length < 3) {
+                        console.warn('信息格式不完整:', recipient);
+                        return;
+                    }
+                    
+                    // 提取姓名和分机号
+                    let nameLine = lines[0];
+                    let extension = '';
+                    
+                    // 检查姓名行是否有分机号
+                    const nameMatch = nameLine.match(/^(.+?)(?:\[(\d+)\])?$/);
+                    if (nameMatch) {
+                        nameLine = nameMatch[1];
+                        if (nameMatch[2]) {
+                            extension = `[${nameMatch[2]}]`;
+                        }
+                    }
+                    
+                    // 提取电话
+                    let phoneLine = lines[1];
+                    // 检查电话行是否有分机号
+                    const phoneMatch = phoneLine.match(/^(\d+)(?:-*\[(\d+)\])?$/);
+                    if (phoneMatch) {
+                        phoneLine = phoneMatch[1];
+                        if (phoneMatch[2] && !extension) {
+                            extension = `[${phoneMatch[2]}]`;
+                        }
+                    }
+                    
+                    // 提取地址（保留地址中的分机号）
+                    let addressLine = lines[2];
+                    
+                    // 提取数量
+                    let quantity = '';
+                    if (lines.length > 3) {
+                        const quantityMatch = lines[3].match(/(\d+)\s*盒/);
+                        if (quantityMatch) {
+                            quantity = quantityMatch[1];
+                        }
+                    }
+                    
+                    // 合并姓名和分机号
+                    const fullName = nameLine + extension;
+                    
+                    // 添加到表格数据
+                    currentTableData.push({
+                        specification: '', // 规格默认空
+                        quantity: quantity,
+                        slash1: '', // 第一个/默认空
+                        slash2: '', // 第二个/默认空
+                        name: fullName,
+                        phone: phoneLine,
+                        address: addressLine,
+                        remark: '' // 备注默认空
+                    });
+                });
+                
+                // 生成表格
+                generateTable(currentTableData);
+                processedCount += currentTableData.length;
+                updateStats();
+                showProcessing(false);
+                
+                if (currentTableData.length > 0) {
+                    showToast(`成功提取 ${currentTableData.length} 条订单信息`);
+                } else {
+                    showToast('未提取到有效信息，请检查输入格式', 'error');
+                }
+            }, 800);
+        });
+        
+        function generateTable(data) {
+            const tableContainer = document.getElementById('tableContainer');
+            
+            if (data.length === 0) {
+                tableContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>未提取到有效信息</p></div>';
+                return;
+            }
+            
+            let tableHTML = '<table><thead><tr>';
+            tableHTML += '<th>规格</th><th>数量</th><th>/</th><th>/</th><th>姓名</th><th>电话</th><th>地址</th><th>备注</th>';
+            tableHTML += '</tr></thead><tbody>';
+            
+            data.forEach(item => {
+                tableHTML += `<tr>
+                    <td>${item.specification}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.slash1}</td>
+                    <td>${item.slash2}</td>
+                    <td>${item.name}</td>
+                    <td>${item.phone}</td>
+                    <td>${item.address}</td>
+                    <td>${item.remark}</td>
+                </tr>`;
+            });
+            
+            tableHTML += '</tbody></table>';
+            tableContainer.innerHTML = tableHTML;
+        }
+        
+        document.getElementById('copyBtn').addEventListener('click', function() {
+            if (currentTableData.length === 0) {
+                showToast('没有表格数据可复制', 'error');
+                return;
+            }
+            
+            let csvContent = '规格,数量,/,/,姓名,电话,地址,备注\n';
+            
+            currentTableData.forEach(item => {
+                const row = [
+                    item.specification,
+                    item.quantity,
+                    item.slash1,
+                    item.slash2,
+                    item.name,
+                    item.phone,
+                    item.address,
+                    item.remark
+                ].map(field => {
+                    // 处理包含逗号或引号的字段
+                    if (field.includes(',') || field.includes('"')) {
+                        return '"' + field.replace(/"/g, '""') + '"';
+                    }
+                    return field;
+                }).join(',');
+                
+                csvContent += row + '\n';
+            });
+            
+            // 复制到剪贴板
+            navigator.clipboard.writeText(csvContent).then(() => {
+                showToast('表格数据已复制到剪贴板，可以粘贴到Excel中');
+            }).catch(err => {
+                console.error('复制失败:', err);
+                showToast('复制失败，请手动选择并复制表格内容', 'error');
+            });
+        });
+        
+        document.getElementById('exportBtn').addEventListener('click', function() {
+            if (currentTableData.length === 0) {
+                showToast('没有表格数据可导出', 'error');
+                return;
+            }
+            
+            // 创建工作簿
+            const wb = XLSX.utils.book_new();
+            
+            // 准备工作表数据
+            const wsData = [
+                ['规格', '数量', '/', '/', '姓名', '电话', '地址', '备注']
+            ];
+            
+            currentTableData.forEach(item => {
+                wsData.push([
+                    item.specification,
+                    item.quantity,
+                    item.slash1,
+                    item.slash2,
+                    item.name,
+                    item.phone,
+                    item.address,
+                    item.remark
+                ]);
+            });
+            
+            // 创建工作表
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            
+            // 将工作表添加到工作簿
+            XLSX.utils.book_append_sheet(wb, ws, '订单信息');
+            
+            // 生成Excel文件并下载
+            const date = new Date();
+            const filename = `舍鲜果订单信息_${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}_${date.getHours().toString().padStart(2, '0')}${date.getMinutes().toString().padStart(2, '0')}.xlsx`;
+            
+            XLSX.writeFile(wb, filename);
+            showToast('Excel文件已生成并开始下载');
+        });
+        
+        // 初始化统计数据
+        updateStats();
+    </script>
+</body>
+</html>
