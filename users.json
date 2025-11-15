@@ -13,5 +13,10 @@
     "username": "沈文浩",
     "password": "1234",
     "role": "user"
+  },
+  {
+    "username": "马凯",
+    "password": "1234",
+    "role": "user"
   }
 ]
